@@ -6,6 +6,10 @@
 (defrecord Node [id state rule])
 (defrecord Edge [nodes]) ;; reference to node ids
 
+(defn life-node
+  [id]
+  {:state 0 :id id})
+
 (defn grid-shape
   [n m create-node]
   (let [grid (graph/graph)
@@ -100,7 +104,7 @@
   {0 \.
    1 \o})
 
-(defn print-nodes
+(defn render-nodes
   [nodes]
   (let [rows (group-by first (keys nodes))
         lines (sort-by (comp first first) (map sort (vals rows)))
@@ -115,6 +119,18 @@
                     line)))
                 lines)]
     (string/join "\n" states)))
+    
+(defn print-nodes
+  [nodes]
+  (println (render-nodes nodes))
+  (println "-----------------------"))
 
-(defn imprint-glider
-  [])
+(defn glider-demo
+  [steps]
+  (let [[grid nodes] (grid-shape 10 10 life-node)
+        gliding (imprint nodes glider)]
+    (doseq [demo (take steps (gear gliding grid conway))]
+      ((comp print-nodes first) demo))))
+    
+      
+  
